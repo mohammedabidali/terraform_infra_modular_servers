@@ -1,0 +1,57 @@
+{
+  "components": {
+    "#index": {
+      "id": "#index",
+      "run_id": "7e8aa28920024b6696e9fa1ab6cde095",
+      "name": "CalApp:Web:Server:Index",
+      "description": "",
+      "paths": [
+        [
+          "CalApp",
+          "Web",
+          "Server"
+        ],
+        []
+      ],
+      "custom": {}
+    },
+    "#guest": {
+      "id": "#guest",
+      "run_id": "7e8aa28920024b6696e9fa1ab6cde095",
+      "name": "",
+      "description": "",
+      "paths": [
+        []
+      ],
+      "custom": {}
+    },
+    "#subnet": {
+      "id": "#subnet",
+      "run_id": "7e8aa28920024b6696e9fa1ab6cde095",
+      "name": "CalcApp:VPC:Subnet",
+      "description": "",
+      "paths": [
+        [
+          "CalcApp",
+          "VPC"
+        ],
+        []
+      ],
+      "custom": {}
+    },
+    "#web_server": {
+      "id": "#web_server",
+      "run_id": "7e8aa28920024b6696e9fa1ab6cde095",
+      "name": "CalcApp:Web:Server",
+      "description": "",
+      "paths": [
+        [
+          "CalcApp",
+          "Web"
+        ],
+        []
+      ],
+      "custom": {}
+    }
+  }
+}
