@@ -7,7 +7,8 @@ import calc_function as calc_function
 SECRET_KEY = "jasnfj"
 flask_app = Flask(__name__)
 
-# @componenet External:Guest (#guest)
+# @component External:Guest (#guest)
+# @component CalcApp:Web:Database (#database)
 def verify_token(token):
     if token:
         decoded_token = jwt.decode(token, SECRET_KEY, "HS256")
@@ -18,8 +19,8 @@ def verify_token(token):
     else:
         return False
 
-# @component CalApp:Web:Server:Index (#index)
-# @connects #guest to #index with HTTP-GET
+# @component CalcApp:Web:Server:Index (#index)
+# @connects #guest to #index with HTTPs-GET-Request
 @flask_app.route('/')
 def index_page():
     #print(request.cookies)
@@ -38,10 +39,14 @@ def index_page():
         resp.set_cookie('user_id', str(user_id))
         return resp
 
+# @component CalcApp:Web:Server:Help (#help)
+# @connects #guest to #help with HTTPs-GET-Request
 @flask_app.route('/help')
 def help_page():
     return "This is the help page"
 
+# @component CalcApp:Web:Server:Login (#login)
+# @connects #guest to #login with HTTPs-GET-Request
 @flask_app.route('/login')
 def login_page():
     return render_template('login2.html')
@@ -51,6 +56,10 @@ def create_token(username, password):
     token = jwt.encode({'user_id': 123154, 'username': username, 'expiry': str(validity)}, SECRET_KEY, "HS256")
     return token
 
+# @component CalcApp:Web:Server:Authenticate (#authenticate)
+# @connects #login to #authenticate with HTTPs-POST-Request
+# @connects #authenticate to #database with SQL Query
+# @connects #database to #authenticate with SQL Response
 @flask_app.route('/authenticate', methods = ['POST'])
 def authenticate_users():
     data = request.form
@@ -91,6 +100,8 @@ def calculator():
         }
         return render_template('calculator.html', **kwargs)
 
+# @component CalcApp:Web:Server:Calculator2 (#calculator2)
+# @connects #authenticate to #calculator2 with HTTPs-GET-Request
 @flask_app.route('/calculator2', methods = ['GET'])
 def calculator_get():
     isUserLoggedIn = False
@@ -103,6 +114,8 @@ def calculator_get():
         resp = make_response(redirect('/login'))
         return resp
 
+# @component CalcApp:Web:Server:Calculate (#calculate)
+# @connects #calculator2 to #calculate with HTTPs-POST-Request
 @flask_app.route('/calculate', methods = ['POST'])
 def calculate_post():
     number_1 = request.form.get('number_1', type = int)
@@ -113,6 +126,9 @@ def calculate_post():
 
     return str(result)
 
+# @component CalcApp:Web:Server:Calculate2 (#calculate2)
+# @connects #calculator2 to #calculate2 with HTTPs-POST-Request
+# @connects #calculate2 to #calculator2 with HTTPs-POST-Response
 @flask_app.route('/calculate2', methods = ['POST'])
 def calculate_post2():
     print(request.form)

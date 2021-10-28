@@ -23,6 +23,16 @@ module "webserver" {
   var_aws_vpc_id = module.vpc.output_aws_vpc_id
 }
 
+terraform {
+  backend "s3" {
+    bucket = "cyber94-mali-bucket"
+    key = "tfstate/calculator2/terraform.tfstate"
+    region = "eu-west-1"
+    dynamodb_table = "cyber94_calculator2_mohammed_dynamodb_table_lock"
+    encrypt = true
+  }
+}
+
 module "s3_bucket" {
   source = "./modules/terraform-backend"
 
