@@ -10,6 +10,34 @@ A threatspec project.
 
 # Exposures
 
+## Sql injection against CalcApp:Web:Database
+Not sanitizing the input from guest_user
+
+```
+# @exposes #database to SQL Injection with not sanitizing the input from Guest_User
+@flask_app.route('/login')
+def login_page():
+    return render_template('login2.html')
+
+def create_token(username, password):
+
+```
+/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
+
+## Sql injection against CalcApp:Web:Server:Calculator2
+Not sanitizing the input from auth_user
+
+```
+# @exposes #calculator2 to SQL Injection with not sanitizing the input from Auth_User
+@flask_app.route('/authenticate', methods = ['POST'])
+def authenticate_users():
+    data = request.form
+    username = data['username']
+    password = data['password']
+
+```
+/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
+
 
 # Acceptances
 
@@ -48,7 +76,7 @@ HTTPs-GET-Request
 def help_page():
     return "This is the help page"
 
-@flask_app.route('/login')
+
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
@@ -58,25 +86,53 @@ HTTPs-GET-Request
 
 ```
 # @connects #guest to #login with HTTPs-GET-Request
+
 @flask_app.route('/login')
 def login_page():
     return render_template('login2.html')
 
-def create_token(username, password):
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
 
-## CalcApp:Web:Server:Login To CalcApp:Web:Server:Authenticate
+## CalcApp:Web:Server:Login To External:Guest
+HTTPs-GET-Response
+
+```
+# @connects #login to #guest with HTTPs-GET-Response
+
+@flask_app.route('/login')
+def login_page():
+    return render_template('login2.html')
+
+
+```
+/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
+
+## External:Guest To CalcApp:Web:Server:Authenticate
 HTTPs-POST-Request
 
 ```
-# @connects #login to #authenticate with HTTPs-POST-Request
-@flask_app.route('/authenticate', methods = ['POST'])
-def authenticate_users():
-    data = request.form
-    username = data['username']
-    password = data['password']
+# @connects #guest to #authenticate with HTTPs-POST-Request
+
+@flask_app.route('/login')
+def login_page():
+    return render_template('login2.html')
+
+
+```
+/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
+
+## CalcApp:Web:Server:Authenticate To External:Guest
+HTTPs-POST-Response
+
+```
+# @connects #authenticate to #guest with HTTPs-POST-Response
+
+@flask_app.route('/login')
+def login_page():
+    return render_template('login2.html')
+
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
@@ -86,11 +142,11 @@ SQL Query
 
 ```
 # @connects #authenticate to #database with SQL Query
+
 @flask_app.route('/authenticate', methods = ['POST'])
 def authenticate_users():
     data = request.form
     username = data['username']
-    password = data['password']
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
@@ -100,20 +156,20 @@ SQL Response
 
 ```
 # @connects #database to #authenticate with SQL Response
+
 @flask_app.route('/authenticate', methods = ['POST'])
 def authenticate_users():
     data = request.form
     username = data['username']
-    password = data['password']
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
 
-## CalcApp:Web:Server:Authenticate To CalcApp:Web:Server:Calculator2
-HTTPs-GET-Request
+## CalcApp:Web:Server:Auth_User To CalcApp:Web:Server:Calculator2
+HTTPs-POST-Request
 
 ```
-# @connects #authenticate to #calculator2 with HTTPs-GET-Request
+# @connects #auth_user to #calculator2 with HTTPs-POST-Request
 @flask_app.route('/calculator2', methods = ['GET'])
 def calculator_get():
     isUserLoggedIn = False
@@ -123,44 +179,16 @@ def calculator_get():
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
 
-## CalcApp:Web:Server:Calculator2 To CalcApp:Web:Server:Calculate
+## CalcApp:Web:Server:Calculator2 To CalcApp:Web:Server:Auth_User
 HTTPs-POST-Request
 
 ```
-# @connects #calculator2 to #calculate with HTTPs-POST-Request
-@flask_app.route('/calculate', methods = ['POST'])
-def calculate_post():
-    number_1 = request.form.get('number_1', type = int)
-    number_2 = request.form.get('number_2', type = int)
-    opertaion = request.form.get('operation')
-
-```
-/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
-
-## CalcApp:Web:Server:Calculator2 To CalcApp:Web:Server:Calculate2
-HTTPs-POST-Request
-
-```
-# @connects #calculator2 to #calculate2 with HTTPs-POST-Request
-@flask_app.route('/calculate2', methods = ['POST'])
-def calculate_post2():
-    print(request.form)
-    number_1 = request.form.get('number_1', type = int)
-    number_2 = request.form.get('number_2', type = int)
-
-```
-/home/kali/cyber/projects/calculator_rest_api/app/main.py:1
-
-## CalcApp:Web:Server:Calculate2 To CalcApp:Web:Server:Calculator2
-HTTPs-POST-Response
-
-```
-# @connects #calculate2 to #calculator2 with HTTPs-POST-Response
-@flask_app.route('/calculate2', methods = ['POST'])
-def calculate_post2():
-    print(request.form)
-    number_1 = request.form.get('number_1', type = int)
-    number_2 = request.form.get('number_2', type = int)
+# @connects #calculator2 to #auth_user with HTTPs-POST-Request
+@flask_app.route('/calculator2', methods = ['GET'])
+def calculator_get():
+    isUserLoggedIn = False
+    if 'token' in request.cookies:
+        isUserLoggedIn = verify_token(request.cookies['token'])
 
 ```
 /home/kali/cyber/projects/calculator_rest_api/app/main.py:1
@@ -182,6 +210,10 @@ resource "aws_instance" "cyber94_calculator2_mohammed_app_server_tf" {
 
 # Components
 
+## CalcApp:Web:Database
+
+## CalcApp:Web:Server:Calculator2
+
 ## External:Guest
 
 ## CalcApp:Web:Server:Index
@@ -192,13 +224,7 @@ resource "aws_instance" "cyber94_calculator2_mohammed_app_server_tf" {
 
 ## CalcApp:Web:Server:Authenticate
 
-## CalcApp:Web:Database
-
-## CalcApp:Web:Server:Calculator2
-
-## CalcApp:Web:Server:Calculate
-
-## CalcApp:Web:Server:Calculate2
+## CalcApp:Web:Server:Auth_User
 
 ## CalcApp:VPC:Subnet
 
@@ -206,6 +232,9 @@ resource "aws_instance" "cyber94_calculator2_mohammed_app_server_tf" {
 
 
 # Threats
+
+## Sql injection
+
 
 
 # Controls

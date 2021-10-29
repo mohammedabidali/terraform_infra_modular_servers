@@ -1,3 +1,32 @@
 {
-  "threats": {}
+  "threats": {
+    "#sqlinj": {
+      "id": "#sqlinj",
+      "run_id": "044232a68c3d4ff59782138afe5bb24e",
+      "name": "SQL Injection",
+      "description": "",
+      "custom": {}
+    },
+    "#sql_injection": {
+      "id": "#sql_injection",
+      "run_id": "044232a68c3d4ff59782138afe5bb24e",
+      "name": "SQL Injection",
+      "description": "",
+      "custom": {}
+    },
+    "#database": {
+      "id": "#database",
+      "run_id": "044232a68c3d4ff59782138afe5bb24e",
+      "name": "",
+      "description": "",
+      "custom": {}
+    },
+    "#calculator2": {
+      "id": "#calculator2",
+      "run_id": "044232a68c3d4ff59782138afe5bb24e",
+      "name": "",
+      "description": "",
+      "custom": {}
+    }
+  }
 }

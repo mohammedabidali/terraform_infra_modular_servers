@@ -1,6 +1,33 @@
 {
   "mitigations": [],
-  "exposures": [],
+  "exposures": [
+    {
+      "threat": "#sql_injection",
+      "component": "#database",
+      "details": "not sanitizing the input from Guest_User",
+      "description": "",
+      "custom": {},
+      "source": {
+        "annotation": "@exposes #database to SQL Injection with not sanitizing the input from Guest_User",
+        "code": "# @exposes #database to SQL Injection with not sanitizing the input from Guest_User\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\ndef create_token(username, password):\n",
+        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
+        "line": 1
+      }
+    },
+    {
+      "threat": "#sql_injection",
+      "component": "#calculator2",
+      "details": "not sanitizing the input from Auth_User",
+      "description": "",
+      "custom": {},
+      "source": {
+        "annotation": "@exposes #calculator2 to SQL Injection with not sanitizing the input from Auth_User",
+        "code": "# @exposes #calculator2 to SQL Injection with not sanitizing the input from Auth_User\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n    password = data['password']\n",
+        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
+        "line": 1
+      }
+    }
+  ],
   "transfers": [],
   "acceptances": [],
   "connections": [
@@ -27,7 +54,7 @@
       "custom": {},
       "source": {
         "annotation": "@connects #guest to #help with HTTPs-GET-Request",
-        "code": "# @connects #guest to #help with HTTPs-GET-Request\n@flask_app.route('/help')\ndef help_page():\n    return \"This is the help page\"\n\n@flask_app.route('/login')\n",
+        "code": "# @connects #guest to #help with HTTPs-GET-Request\n@flask_app.route('/help')\ndef help_page():\n    return \"This is the help page\"\n\n\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
@@ -41,21 +68,49 @@
       "custom": {},
       "source": {
         "annotation": "@connects #guest to #login with HTTPs-GET-Request",
-        "code": "# @connects #guest to #login with HTTPs-GET-Request\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\ndef create_token(username, password):\n",
+        "code": "# @connects #guest to #login with HTTPs-GET-Request\n\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
     },
     {
       "source_component": "#login",
+      "destination_component": "#guest",
+      "direction": "to",
+      "details": "HTTPs-GET-Response",
+      "description": "",
+      "custom": {},
+      "source": {
+        "annotation": "@connects #login to #guest with HTTPs-GET-Response",
+        "code": "# @connects #login to #guest with HTTPs-GET-Response\n\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\n",
+        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
+        "line": 1
+      }
+    },
+    {
+      "source_component": "#guest",
       "destination_component": "#authenticate",
       "direction": "to",
       "details": "HTTPs-POST-Request",
       "description": "",
       "custom": {},
       "source": {
-        "annotation": "@connects #login to #authenticate with HTTPs-POST-Request",
-        "code": "# @connects #login to #authenticate with HTTPs-POST-Request\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n    password = data['password']\n",
+        "annotation": "@connects #guest to #authenticate with HTTPs-POST-Request",
+        "code": "# @connects #guest to #authenticate with HTTPs-POST-Request\n\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\n",
+        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
+        "line": 1
+      }
+    },
+    {
+      "source_component": "#authenticate",
+      "destination_component": "#guest",
+      "direction": "to",
+      "details": "HTTPs-POST-Response",
+      "description": "",
+      "custom": {},
+      "source": {
+        "annotation": "@connects #authenticate to #guest with HTTPs-POST-Response",
+        "code": "# @connects #authenticate to #guest with HTTPs-POST-Response\n\n@flask_app.route('/login')\ndef login_page():\n    return render_template('login2.html')\n\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
@@ -69,7 +124,7 @@
       "custom": {},
       "source": {
         "annotation": "@connects #authenticate to #database with SQL Query",
-        "code": "# @connects #authenticate to #database with SQL Query\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n    password = data['password']\n",
+        "code": "# @connects #authenticate to #database with SQL Query\n\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
@@ -83,63 +138,35 @@
       "custom": {},
       "source": {
         "annotation": "@connects #database to #authenticate with SQL Response",
-        "code": "# @connects #database to #authenticate with SQL Response\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n    password = data['password']\n",
+        "code": "# @connects #database to #authenticate with SQL Response\n\n@flask_app.route('/authenticate', methods = ['POST'])\ndef authenticate_users():\n    data = request.form\n    username = data['username']\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
     },
     {
-      "source_component": "#authenticate",
+      "source_component": "#auth_user",
       "destination_component": "#calculator2",
       "direction": "to",
-      "details": "HTTPs-GET-Request",
+      "details": "HTTPs-POST-Request",
       "description": "",
       "custom": {},
       "source": {
-        "annotation": "@connects #authenticate to #calculator2 with HTTPs-GET-Request",
-        "code": "# @connects #authenticate to #calculator2 with HTTPs-GET-Request\n@flask_app.route('/calculator2', methods = ['GET'])\ndef calculator_get():\n    isUserLoggedIn = False\n    if 'token' in request.cookies:\n        isUserLoggedIn = verify_token(request.cookies['token'])\n",
+        "annotation": "@connects #auth_user to #calculator2 with HTTPs-POST-Request",
+        "code": "# @connects #auth_user to #calculator2 with HTTPs-POST-Request\n@flask_app.route('/calculator2', methods = ['GET'])\ndef calculator_get():\n    isUserLoggedIn = False\n    if 'token' in request.cookies:\n        isUserLoggedIn = verify_token(request.cookies['token'])\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
     },
     {
       "source_component": "#calculator2",
-      "destination_component": "#calculate",
+      "destination_component": "#auth_user",
       "direction": "to",
       "details": "HTTPs-POST-Request",
       "description": "",
       "custom": {},
       "source": {
-        "annotation": "@connects #calculator2 to #calculate with HTTPs-POST-Request",
-        "code": "# @connects #calculator2 to #calculate with HTTPs-POST-Request\n@flask_app.route('/calculate', methods = ['POST'])\ndef calculate_post():\n    number_1 = request.form.get('number_1', type = int)\n    number_2 = request.form.get('number_2', type = int)\n    opertaion = request.form.get('operation')\n",
-        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
-        "line": 1
-      }
-    },
-    {
-      "source_component": "#calculator2",
-      "destination_component": "#calculate2",
-      "direction": "to",
-      "details": "HTTPs-POST-Request",
-      "description": "",
-      "custom": {},
-      "source": {
-        "annotation": "@connects #calculator2 to #calculate2 with HTTPs-POST-Request",
-        "code": "# @connects #calculator2 to #calculate2 with HTTPs-POST-Request\n@flask_app.route('/calculate2', methods = ['POST'])\ndef calculate_post2():\n    print(request.form)\n    number_1 = request.form.get('number_1', type = int)\n    number_2 = request.form.get('number_2', type = int)\n",
-        "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
-        "line": 1
-      }
-    },
-    {
-      "source_component": "#calculate2",
-      "destination_component": "#calculator2",
-      "direction": "to",
-      "details": "HTTPs-POST-Response",
-      "description": "",
-      "custom": {},
-      "source": {
-        "annotation": "@connects #calculate2 to #calculator2 with HTTPs-POST-Response",
-        "code": "# @connects #calculate2 to #calculator2 with HTTPs-POST-Response\n@flask_app.route('/calculate2', methods = ['POST'])\ndef calculate_post2():\n    print(request.form)\n    number_1 = request.form.get('number_1', type = int)\n    number_2 = request.form.get('number_2', type = int)\n",
+        "annotation": "@connects #calculator2 to #auth_user with HTTPs-POST-Request",
+        "code": "# @connects #calculator2 to #auth_user with HTTPs-POST-Request\n@flask_app.route('/calculator2', methods = ['GET'])\ndef calculator_get():\n    isUserLoggedIn = False\n    if 'token' in request.cookies:\n        isUserLoggedIn = verify_token(request.cookies['token'])\n",
         "filename": "/home/kali/cyber/projects/calculator_rest_api/app/main.py",
         "line": 1
       }
@@ -161,5 +188,5 @@
   ],
   "reviews": [],
   "tests": [],
-  "run_id": "20429f3fab404212b62b02f53ad7a092"
+  "run_id": "044232a68c3d4ff59782138afe5bb24e"
 }

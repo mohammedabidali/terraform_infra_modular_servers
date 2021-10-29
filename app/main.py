@@ -47,6 +47,12 @@ def help_page():
 
 # @component CalcApp:Web:Server:Login (#login)
 # @connects #guest to #login with HTTPs-GET-Request
+# @connects #login to #guest with HTTPs-GET-Response
+# @connects #guest to #authenticate with HTTPs-POST-Request
+# @connects #authenticate to #guest with HTTPs-POST-Response
+
+# @threat SQL Injection (#sqlinj)
+# @exposes #database to SQL Injection with not sanitizing the input from Guest_User
 @flask_app.route('/login')
 def login_page():
     return render_template('login2.html')
@@ -57,9 +63,11 @@ def create_token(username, password):
     return token
 
 # @component CalcApp:Web:Server:Authenticate (#authenticate)
-# @connects #login to #authenticate with HTTPs-POST-Request
+# @component CalcApp:Web:Server:Auth_User (#auth_user)
 # @connects #authenticate to #database with SQL Query
 # @connects #database to #authenticate with SQL Response
+
+# @exposes #calculator2 to SQL Injection with not sanitizing the input from Auth_User
 @flask_app.route('/authenticate', methods = ['POST'])
 def authenticate_users():
     data = request.form
@@ -101,7 +109,8 @@ def calculator():
         return render_template('calculator.html', **kwargs)
 
 # @component CalcApp:Web:Server:Calculator2 (#calculator2)
-# @connects #authenticate to #calculator2 with HTTPs-GET-Request
+# @connects #auth_user to #calculator2 with HTTPs-POST-Request
+# @connects #calculator2 to #auth_user with HTTPs-POST-Request
 @flask_app.route('/calculator2', methods = ['GET'])
 def calculator_get():
     isUserLoggedIn = False
@@ -114,8 +123,6 @@ def calculator_get():
         resp = make_response(redirect('/login'))
         return resp
 
-# @component CalcApp:Web:Server:Calculate (#calculate)
-# @connects #calculator2 to #calculate with HTTPs-POST-Request
 @flask_app.route('/calculate', methods = ['POST'])
 def calculate_post():
     number_1 = request.form.get('number_1', type = int)
@@ -126,9 +133,6 @@ def calculate_post():
 
     return str(result)
 
-# @component CalcApp:Web:Server:Calculate2 (#calculate2)
-# @connects #calculator2 to #calculate2 with HTTPs-POST-Request
-# @connects #calculate2 to #calculator2 with HTTPs-POST-Response
 @flask_app.route('/calculate2', methods = ['POST'])
 def calculate_post2():
     print(request.form)
